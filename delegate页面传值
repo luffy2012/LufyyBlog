@@ -1,0 +1,74 @@
+
+#### delegate页面传值 
+B页面往A页面传值
+
+
+```
+B页面.h 文件
+#import <UIKit/UIKit.h>
+@protocol TwoViewDelegate <NSObject>
+- (void)changeValue:(NSString *)value;
+@end
+
+@interface SecondVCViewController : UIViewController
+@property NSString *text;
+@property (nonatomic) id<TwoViewDelegate> delegate;
+@end
+
+B页面.m 文件
+返回方法：
+- (void)btnPressed:id{
+    [self.delegate changeValue:textFiled.text];
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+```
+
+A页面的实现 B页面的中声明的代理
+```
+#import "ViewController.h"
+#import "SecondVCViewController.h"
+
+@interface ViewController ()<TwoViewDelegate>
+
+@end
+
+@implementation ViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    UILabel *label = [[UILabel alloc]initWithFrame:CGRectMake(30, 100, 100, 100)];
+    label.text = @"我是谁";
+    [self.view addSubview:label];
+    
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    btn.frame = CGRectMake(30, 200, 100, 100);
+    btn.titleLabel.text = @"跳转";
+    btn.backgroundColor = [UIColor blueColor];
+    [btn addTarget:self action:@selector(btnPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btn];
+    // Do any additional setup after loading the view, typically from a nib.
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+
+- (void)btnPressed:id{
+    SecondVCViewController *vc = [[SecondVCViewController alloc]init];
+    vc.text = @"只是传递过来的值";
+    vc.delegate = self;
+//    [self.navigationController pushViewController:vc animated:YES];
+    [ self presentViewController:vc animated: YES completion:nil];
+}
+
+
+- (void)changeValue:(NSString *)value{
+    NSLog(@"返回值为：%@",value);
+}
+
+
+@end
+
+```
